@@ -1,6 +1,6 @@
 .PHONY: clean
 
-test: test.o cksum_rfc.o cksum2.o tsc.o 
+test: test.o cksum_rfc.o cksum2.o cksum3.o tsc.o 
 	gcc -o $@ $^
 
 test.o: test.c
