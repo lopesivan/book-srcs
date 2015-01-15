@@ -15,45 +15,52 @@
 
 bits 64
 
-; Declarações equivalentes:
-;   static unsigned long count, tmp;
-section .bss
-      align 8
-tmp:  resq  1
-
-section .data
-        align 8
-count:  dq  0
-
 section .text
 
-global TSC_READ_START
-global TSC_READ_END
+global TSC_READ_START:function
+global TSC_READ_END:function
+
+; Declarações equivalentes:
+;   static unsigned long count, tmp;
+;
+; No entanto, coloquei na sessão .text para aproveitar
+; o modo de endereçamento relativo via RIP.
+;
+        align 8
+count:  dq  0
+tmp:    dq  0
 
 ; Protótipo:
 ;   void TSC_READ_START(void);
+;
   align 8
 TSC_READ_START:
   push  rbx
   cpuid
+  prefetchw [rel count]
   rdtsc
-  mov   [count],eax   ; 1.5 ciclos
-  mov   [count+4],edx ; 1.5 ciclos
+  mov   [rel count],eax   ; 1.5 ciclos
+  mov   [rel count+4],edx ; 1.5 ciclos
   pop   rbx           ; 1.5 ciclos
   ret                 ; 8 ciclos.
 
 ; Protótipo:
-;   unsigned long TSC_READ_END(void);
+;   long TSC_READ_END(void);
+;
   align 8
 TSC_READ_END:
                       ; call para essa função toma 1 ciclo.
   rdtscp
-  mov   [tmp],eax
-  mov   [tmp+4],edx
+  mov   [rel tmp],eax
+  mov   [rel tmp+4],edx
   push  rbx
   cpuid
-  mov   rax,[count]
-  sub   rax,[tmp]
+  mov   rax,[rel count]
+  sub   rax,[rel tmp]
   sub   rax,14        ; subtrai todos os "13.5" ciclos "extras".
+  cmp   rax,0         ; if (rax <= 0) rax = 1; /* Só para garantir! */
+  jg    .L1
+  mov   rax,1
+.L1:
   pop   rbx
   ret
