@@ -37,12 +37,13 @@ tmp:    dq  0
 TSC_READ_START:
   push  rbx
   cpuid
-  prefetchw [rel count]
+  prefetchw [rel count]   ; Tenta garantir que as duas variáveis temporárias
+                          ; estejam no cache e prontas para serem escritas.
   rdtsc
   mov   [rel count],eax   ; 1.5 ciclos
   mov   [rel count+4],edx ; 1.5 ciclos
-  pop   rbx           ; 1.5 ciclos
-  ret                 ; 8 ciclos.
+  pop   rbx               ; 1.5 ciclos
+  ret                     ; 8 ciclos.
 
 ; Protótipo:
 ;   long TSC_READ_END(void);
