@@ -47,9 +47,9 @@ global TSC_READ_END:function
 ;
 TSC_READ_START:
   push  rbx
-  cpuid
   prefetchw [count]   ; Tenta garantir que as duas variáveis temporárias
                       ; estejam no cache e prontas para serem escritas.
+  cpuid
   rdtsc
   mov   [count],eax   ; 1.5 ciclos
   mov   [count+4],edx ; 1.5 ciclos
@@ -73,7 +73,6 @@ TSC_READ_END:
 
   ; if (rax <= 0)
   ;   rax = 1;
-  cmp   rax,0
   jg    .L1
   mov   rax,1
 .L1:
