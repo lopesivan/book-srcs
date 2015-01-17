@@ -32,7 +32,7 @@ section .data
 ; Declarações equivalentes:
 ;   static unsigned long count, tmp;
 ;
-        align 8
+        align 16
 count:  dq    0
 tmp:    dq    0
 
@@ -41,7 +41,7 @@ section .text
 global TSC_READ_START:function
 global TSC_READ_END:function
 
-  align 8
+  align 16
 ; Protótipo:
 ;   void TSC_READ_START(void);
 ;
@@ -59,7 +59,7 @@ TSC_READ_START:
 ; Protótipo:
 ;   unsigned long TSC_READ_END(void);
 ;
-  align 8
+  align 16
 TSC_READ_END:
                       ; call para essa função toma 1 ciclo.
   rdtscp
