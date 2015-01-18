@@ -73,9 +73,8 @@ TSC_READ_END:
 
   ; if (rax <= 0)
   ;   rax = 1;
-  jg    .L1
-  mov   rax,1
-.L1:
+  mov    rbx,1
+  cmovle rax,rbx
 
   pop   rbx
   ret
