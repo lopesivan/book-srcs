@@ -1,0 +1,3 @@
+#!/bin/bash
+gcc -O3 -mtune=native -o SortedArrayTest SortedArrayTest.c
+javac SortedArrayTest.java

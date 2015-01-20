@@ -1,3 +1,0 @@
-#!/bin/bash
-g++ -O3 -mtune=native -o sorted-array-test sorted-array-test.cc
-javac SortedArrayTest.java
