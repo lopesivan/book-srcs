@@ -12,8 +12,7 @@ int main()
         data[c] = std::rand() % 256;
 
     // !!! With this, the next loop runs faster
-    // FRED: FALSE!! Runs at the same speed!
-    //std::sort(data, data + arraySize);
+    std::sort(data, data + arraySize);
 
     // Test
     clock_t start = clock();
