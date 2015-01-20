@@ -7,6 +7,7 @@
 
 int buffer[MAX_BUFFER_SIZE];
 
+/* Preenche array com valores aleatórios entre 0 e 255. */
 void random_fill_buffer(void)
 {
   int i;
@@ -16,6 +17,7 @@ void random_fill_buffer(void)
     buffer[i] = rand() % 256;
 }
 
+/* Usada por qsort. */
 int compare(const void *x, const void *y) { return *(int *)x < *(int *)y; }
 
 int main(void)
@@ -27,7 +29,8 @@ int main(void)
 
   random_fill_buffer();
 
-  //qsort(buffer, MAX_BUFFER_SIZE, sizeof(int), compare);
+  // Retire isso daqui para testar com o array fora de ordem.
+  qsort(buffer, MAX_BUFFER_SIZE, sizeof(int), compare);
 
   clkstart = clock();
 
