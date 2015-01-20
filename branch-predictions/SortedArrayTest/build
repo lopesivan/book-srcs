@@ -1,4 +1,0 @@
-#!/bin/bash
-gcc -O3 -mtune=native -DSORTED_ARRAY -o SortedArrayTest SortedArrayTest.c
-gcc -O3 -mtune=native -o UnSortedArrayTest SortedArrayTest.c
-javac SortedArrayTest.java
