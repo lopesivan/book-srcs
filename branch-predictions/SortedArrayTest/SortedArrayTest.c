@@ -30,7 +30,9 @@ int main(void)
   random_fill_buffer();
 
   // Retire isso daqui para testar com o array fora de ordem.
+#ifdef SORTED_ARRAY
   qsort(buffer, MAX_BUFFER_SIZE, sizeof(int), compare);
+#endif
 
   clkstart = clock();
 
