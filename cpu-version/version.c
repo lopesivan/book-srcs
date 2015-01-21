@@ -20,13 +20,19 @@ const char *getBrandString(void);
 void main(void)
 {
   unsigned a, b, c, d;
-  int type, family, model, stepping;
+  int type, family, family2, model, stepping;
 
   __cpuid(1, a, b, c, d);
   type = ((struct version_s *)&a)->type;
-  family = ((struct version_s *)&a)->family;
+  family = family2 = ((struct version_s *)&a)->family;
   model = ((struct version_s *)&a)->model;
   stepping = ((struct version_s *)&a)->stepping;
+
+  if (family == 15)
+    family2 += ((struct version_s *)&a)->exfamily;
+
+  if (family == 6 || family == 15)
+    model += ((struct version_s *)&a)->exmodel << 4;
 
   printf("Seu processador: \"%s\"\n"
          "\tTipo: %s\n"
@@ -35,7 +41,7 @@ void main(void)
          "\tStepping: 0x%02X\n",
          getBrandString(),
          processor_types[type],
-         family, model, stepping);
+         family2, model, stepping);
 }
 
 const char *getBrandString(void)
