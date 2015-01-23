@@ -10,6 +10,7 @@ int main(int argc, char *argv[])
 {
   PyObject *pModule, *pDict, *pFunc;
   PyObject *pArgs, *pValue;
+  PyObject *sys, *path;
   wchar_t *paths;
   jmp_buf jb;
   int i;
@@ -27,8 +28,9 @@ int main(int argc, char *argv[])
     return 1;
   }
 
-  paths = Py_GetPath();
-  wprintf(L"Path: %s\n", paths);
+  sys = PyImport_ImportModule("sys");
+  path = PyObject_GetAttrString(sys, "path");
+  PyList_Append(path, PyString_FromString("."));
 
   /* Finaliza, em caso de erro. */
   if (setjmp(jb))
@@ -45,12 +47,12 @@ int main(int argc, char *argv[])
     if (pFunc && PyCallable_Check(pFunc)) 
     {
       argv++;
-      argc--;
 
-      pArgs = PyTuple_New(argc);
-      for (i = 0; i < argc; i++) 
+      pArgs = PyTuple_New(--argc);
+      i = 0;
+      while (*argv) 
       {
-        if ((pValue = PyInt_FromLong(atoi(*argv++))) != NULL)
+        if ((pValue = PyInt_FromLong(atoi(*argv++))) == NULL)
         {
           Py_DECREF(pArgs);
           Py_DECREF(pFunc);
@@ -59,7 +61,7 @@ int main(int argc, char *argv[])
         }
 
         /* pValue reference stolen here: */
-        PyTuple_SetItem(pArgs, i, pValue);
+        PyTuple_SetItem(pArgs, i++, pValue);
       }
 
       pValue = PyObject_CallObject(pFunc, pArgs);
@@ -85,8 +87,6 @@ int main(int argc, char *argv[])
 
       fprintf(stderr, "Cannot find function \"" FUNCTION_NAME "\"\n");
     }
-
-    Py_DECREF(pModule);
   }
   else 
   {
