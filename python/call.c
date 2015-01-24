@@ -17,10 +17,11 @@ int main(int argc, char *argv[])
 
   if (argc != 3)
   {
-    fprintf(stderr, "usage: call param1 param2.\n");
+    fprintf(stderr, "usage: call num1 num2.\n");
     return 1;
   }
 
+  /* Inicializa Python. */
   Py_Initialize();
   if (!Py_IsInitialized())
   {
@@ -28,6 +29,7 @@ int main(int argc, char *argv[])
     return 1;
   }
 
+  /* Isto é necessário para adicionar o diretório atual na lista sys.path */
   sys = PyImport_ImportModule("sys");
   path = PyObject_GetAttrString(sys, "path");
   PyList_Append(path, PyString_FromString("."));
@@ -39,15 +41,20 @@ int main(int argc, char *argv[])
     return 1;
   }
 
+  /* Carrega o módulo... */
   if ((pModule = PyImport_ImportModule(MODULE_NAME)) != NULL)
   {
+    /* Obtem objeto relativo à função */
     pFunc = PyObject_GetAttrString(pModule, FUNCTION_NAME);
+
+    /* Não precisamos mais do módulo. */
     Py_DECREF(pModule);
 
-    if (pFunc && PyCallable_Check(pFunc)) 
+    if (pFunc != NULL && PyCallable_Check(pFunc)) 
     {
       argv++;
 
+      /* Argumentos de funções são passados em tuplas. */
       pArgs = PyTuple_New(--argc);
       i = 0;
       while (*argv) 
@@ -60,11 +67,15 @@ int main(int argc, char *argv[])
           longjmp(jb, 1);
         }
 
-        /* pValue reference stolen here: */
+        /* DUVIDA: Como fica a contagem de referência dentro do loop? */
+
         PyTuple_SetItem(pArgs, i++, pValue);
       }
 
       pValue = PyObject_CallObject(pFunc, pArgs);
+      /* DUVIDA: É preciso incrementar a referência aqui? */
+
+      /* Nâo precisamos mais dos argumentos ou da função. */
       Py_DECREF(pArgs);
       Py_DECREF(pFunc);
 
