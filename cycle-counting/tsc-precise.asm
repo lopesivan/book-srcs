@@ -16,15 +16,8 @@
 bits 64
 
 ; Este valor é calculado com base na latência das instruções, de acordo com
-; o manual de otimização da Intel. Ele também foi verificado através da
-; rotina de teste no diretório ./tests/ usando:
-;
-;   $ for i in {1..100}; do ./test; done
-;
-; O menor valor lido foi de 48, o maior foi de 112. O valor 52 aparece em
-; minhas medidas algumas vezes e é condizente com o calculo do gasto dos 13.5 ciclos de máquina.
-;
-WASTED_CYCLES equ 10
+; o manual de otimização da Intel.
+WASTED_CYCLES equ 12
 
 section .data
 ; Essas variáveis temporárias não são exportadas!
