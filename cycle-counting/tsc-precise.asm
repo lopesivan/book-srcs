@@ -24,7 +24,7 @@ bits 64
 ; O menor valor lido foi de 48, o maior foi de 112. O valor 52 aparece em
 ; minhas medidas algumas vezes e é condizente com o calculo do gasto dos 13.5 ciclos de máquina.
 ;
-WASTED_CYCLES equ 52
+WASTED_CYCLES equ 10
 
 section .data
 ; Essas variáveis temporárias não são exportadas!
@@ -46,14 +46,14 @@ global TSC_READ_END:function
 ;   void TSC_READ_START(void);
 ;
 TSC_READ_START:
-  push  rbx
   prefetchw [count]   ; Tenta garantir que as duas variáveis temporárias
                       ; estejam no cache e prontas para serem escritas.
+  push  rbx
   cpuid
+  pop   rbx
   rdtsc
   mov   [count],eax   ; 1.5 ciclos
   mov   [count+4],edx ; 1.5 ciclos
-  pop   rbx           ; 1.5 ciclos
   ret                 ; 8 ciclos.
 
 ; Protótipo:
@@ -67,8 +67,8 @@ TSC_READ_END:
   mov   [tmp+4],edx
   push  rbx
   cpuid
-  mov   rax,[count]
-  sub   rax,[tmp]
+  mov   rax,[tmp]
+  sub   rax,[count]
   sub   rax,WASTED_CYCLES  ; subtrai todos os "13.5" ciclos "extras".
 
   ; if (rax <= 0)
