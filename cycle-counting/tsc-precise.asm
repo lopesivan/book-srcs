@@ -41,9 +41,9 @@ global TSC_READ_END:function
 TSC_READ_START:
   prefetchw [count]   ; Tenta garantir que as duas variáveis temporárias
                       ; estejam no cache e prontas para serem escritas.
-  push  rbx
+  mov   [rsp+8],ebx
   cpuid
-  pop   rbx
+  mov   ebx,[rsp+8]
   rdtsc
   mov   [count],eax   ; 1.5 ciclos
   mov   [count+4],edx ; 1.5 ciclos
@@ -58,7 +58,7 @@ TSC_READ_END:
   rdtscp
   mov   [tmp],eax
   mov   [tmp+4],edx
-  push  rbx
+  mov   [rsp+8],rbx
   cpuid
   mov   rax,[tmp]
   sub   rax,[count]
@@ -69,5 +69,5 @@ TSC_READ_END:
   mov    rbx,1
   cmovle rax,rbx
 
-  pop   rbx
+  mov    rbx,[rsp+8]
   ret
