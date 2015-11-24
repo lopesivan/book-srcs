@@ -45,8 +45,7 @@ int get_cpu_features(void)
   _tmp = c | d;
 
   /* Pega outras extensões. */
-  c = 0;
-  __cpuid(7,a,b,c,d);
+  __cpuid_count(7,0,a,b,c,d);
 
   /* Os bits ainda não se sobrepõem, então é seguro fazer um OR com os valores mascarados. */
   b &= bit_BMI | bit_AVX2 | bit_BMI2;
